@@ -460,6 +460,10 @@ export abstract class AbstractPowerSyncDatabase extends BaseObserver<PowerSyncDB
     await this.syncStreamImplementation?.dispose();
     this.database.close();
     this.closed = true;
+  }  
+  
+  updateCrudUploadThrottleMs(newValue: number) {
+    this.syncStreamImplementation?.updateCrudUploadThrottleMs(newValue);
   }
 
   /**

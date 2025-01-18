@@ -99,6 +99,7 @@ export interface StreamingSyncImplementation extends BaseObserver<StreamingSyncI
   triggerCrudUpload: () => void;
   waitForReady(): Promise<void>;
   waitForStatus(status: SyncStatusOptions): Promise<void>;
+  updateCrudUploadThrottleMs(crudUploadThrottleMs: number): void;
 }
 
 export const DEFAULT_CRUD_UPLOAD_THROTTLE_MS = 1000;
@@ -150,6 +151,16 @@ export abstract class AbstractStreamingSyncImplementation
   }
 
   async waitForReady() {}
+
+  updateCrudUploadThrottleMs(newCrudUploadThrottleMs: number): void {
+    this.options.crudUploadThrottleMs = newCrudUploadThrottleMs;
+    this.triggerCrudUpload = throttleLeadingTrailing(() => {
+      if (!this.syncStatus.connected || this.syncStatus.dataFlowStatus.uploading) {
+        return;
+      }
+      this._uploadAllCrud();
+    }, this.options.crudUploadThrottleMs!);
+  }
 
   waitForStatus(status: SyncStatusOptions): Promise<void> {
     return new Promise((resolve) => {
