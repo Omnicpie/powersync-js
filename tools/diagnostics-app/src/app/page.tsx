@@ -2,7 +2,7 @@ import React from 'react';
 import { CircularProgress, Grid, styled } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { DEFAULT_ENTRY_ROUTE, LOGIN_ROUTE } from './router';
-import { connector } from '@/library/powersync/ConnectionManager';
+import { connector, connect } from '@/library/powersync/ConnectionManager';
 import { getTokenEndpoint } from '@/library/powersync/TokenConnector';
 import { SyncClientImplementation } from '@powersync/web';
 
@@ -28,6 +28,7 @@ export default function EntryPage() {
         navigate(DEFAULT_ENTRY_ROUTE);
       })();
     } else if (connector.hasCredentials()) {
+      connect()
       navigate(DEFAULT_ENTRY_ROUTE);
     } else {
       navigate(LOGIN_ROUTE);
